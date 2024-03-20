@@ -1,10 +1,64 @@
 #include<iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include<fstream>
+#include<string>
+#include<sstream>
 
 
+struct parsedShaders 
+{
+    std::string VertexCode;
+    std::string FragmentCode;
+};
+
+
+static parsedShaders parseShader(const std::string&  path)
+{
+    std::ifstream stream(path);
+
+    enum ShaderType
+    {
+        NONE = -1,
+        VERTEX = 0,
+        FRAGMENT = 1
+    };
+
+
+    std::string line;
+    std::stringstream shaderCodeStream[2];
+
+    ShaderType type = ShaderType::NONE;
+
+    while (getline(stream, line))
+    {
+        if (line.find("shader") != std::string::npos)
+        {
+
+            if (line.find("vertex") != std::string::npos)
+            {
+                type = ShaderType::VERTEX;
+            }
+            else if (line.find("fragment") != std::string::npos)
+            {
+                type = ShaderType::FRAGMENT;
+            }
+        }
+        else
+        {
+            shaderCodeStream[(int)(type)] << line << '\n';
+        }
+    }
+
+   return { shaderCodeStream[0].str(), shaderCodeStream[1].str()};
+}
+
+//Method to compile shader source code
 static unsigned int CompileShader(unsigned int type, const std::string& source)
 {
+
+    std::cout << source << std::endl;
+
     unsigned int id = glCreateShader(type);
     const char* src = source.c_str();
     glShaderSource(id, 1, &src, nullptr);
@@ -13,12 +67,19 @@ static unsigned int CompileShader(unsigned int type, const std::string& source)
     int result;
     glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 
-    if(!result)
+    if(result == GL_FALSE)
     {
         int length;
+
+        // Function get lenght of log in bytes
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-        char* message = (char*)malloc( (sizeof(char)) * length);
+
+        //alloc allocate continous memory in fashion of stack and not heap
+        char* message = (char*)alloca( (sizeof(char)) * length);
+
+        //Get Shader error Log
         glGetShaderInfoLog(id, length, &length, message);
+
 
         std::cout << "Error : " << ( (type == GL_VERTEX_SHADER) ? "Vertex Shader" : "Fragment Shader" )<<" compliation failed "<< std::endl;
         std::cout << message << std::endl;
@@ -33,13 +94,19 @@ static unsigned int CompileShader(unsigned int type, const std::string& source)
 
 static unsigned int CreateShader(const std::string& VertexShader, const std::string& FragmentShader)
 {
+    //Create program Object t which shader can be attached and deattached easily
     unsigned int program = glCreateProgram();
     unsigned int vs = CompileShader(GL_VERTEX_SHADER, VertexShader);
     unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, FragmentShader);
 
+    //Attaching vertex shader to program object
     glAttachShader(program, vs);
+    //Attaching fragment shader to program object
     glAttachShader(program, fs);
+
+    //Linking for program object
     glLinkProgram(program);
+
     glValidateProgram(program);
 
     glDeleteShader(vs);
@@ -72,6 +139,7 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
+    //Initializing Glew for OpenGL glew is library (GLEW is common library of abstraction of OpenGL implementation for all platforms) 
     glewInit();
 
     if (glewInit() == GLEW_OK)
@@ -92,7 +160,6 @@ int main(void)
                   similary we will give draw call for selected buffer only
      )
 */
-
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
     float positions[] =
@@ -113,28 +180,19 @@ int main(void)
     //To Enable Vertex Attribute of particular Index
     glEnableVertexAttribArray(0);
 
-    std::string vs =
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0) in vec4 position;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = position;\n"
-        "}\n";
 
-    std::string fs =
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0) out vec4 color;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "   color = vec4(0.875,0.388,0.929,1.0);\n"
-        "}\n";
+    parsedShaders shaders;
+    shaders = parseShader("res/shaders/Basic.shader");
 
-    unsigned int program =  CreateShader(vs, fs);
-    glUseProgram(program);
+    std::string vs = shaders.VertexCode;
+    std::string fs = shaders.FragmentCode;
+
+    std::cout << vs << std::endl << fs << std::endl;
+
+    //unsigned int program =  CreateShader(vs, fs);
+
+    //To Use Program Object
+    //glUseProgram(program);
 
     /* Loop until the user closes the window */
     
