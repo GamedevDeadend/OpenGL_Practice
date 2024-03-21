@@ -148,10 +148,39 @@ int main(void)
         std::cout << glGetString(GL_VERSION)  << std::endl;
     }
 
-    unsigned int buffer = 7;
 
+    //drawing square using indices without drawing duplicate vertices
+    float positions[] =
+    {
+         -0.5f,-0.5f,//0
+         -0.5f, 0.5f,//1
+          0.5f, 0.5f,//2
+          0.5f,-0.5f //3
+    };
+
+    //indices Method
+    unsigned int indices[] =
+    {
+        0,1,2,
+        2,3,0
+    };
+
+    //Drawing 2 triangles (Square) using old Vertices method without indices
+    /*float positions[] =
+    {
+        -0.5f,-0.5f,
+         0.5f,-0.5f,
+         0.5f,0.5f,
+
+         0.5f, 0.5f,
+         -0.5f,0.5f,
+         -0.5f,-0.5f
+    };*/
+
+
+   unsigned int buffer;
     //for blocking buffer
-    glGenBuffers(1, &buffer);
+   glGenBuffers(1, &buffer);
 
  /*  
      for selecting buffer and use it as array
@@ -162,23 +191,42 @@ int main(void)
 */
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
-    float positions[] =
-    {
-        -0.5f,-0.5f,
-        0.0f,0.5f,
-        0.5f,-.5f
-    };
-
     //Specify size and give data
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
 
     //Vertex(Not necessay pos it can have manyother attributes)->attributes->Components
 
     //Function to define Attribute of vertex
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (const void*)0);
 
-    //To Enable Vertex Attribute of particular Index
+    //To Enable Vertex Attribute of particular vertex Index
     glEnableVertexAttribArray(0);
+
+    //INDICES BUFFER
+
+        unsigned int ibo;
+      //for blocking buffer
+        glGenBuffers(1, &ibo); //ibo  = Indices Bounding Objects
+
+     /*
+     for selecting buffer and use it as array
+     (example :
+                  photoshop if i select layer then i can't draw on another layer
+                  similary we will give draw call for selected buffer only
+     )
+*/
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+    //Specify size and give data
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * 2 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+    //Vertex(Not necessay pos it can have manyother attributes)->attributes->Components
+
+    //Function to define Attribute of vertex
+    //glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (const void*)0);
+
+    //To Enable Vertex Attribute of particular vertex Index
+    //glEnableVertexAttribArray(0);
 
 
     parsedShaders shaders;
@@ -189,10 +237,10 @@ int main(void)
 
     std::cout << vs << std::endl << fs << std::endl;
 
-    //unsigned int program =  CreateShader(vs, fs);
+    unsigned int program =  CreateShader(vs, fs);
 
     //To Use Program Object
-    //glUseProgram(program);
+    glUseProgram(program);
 
     /* Loop until the user closes the window */
     
@@ -203,7 +251,10 @@ int main(void)
 
 
         //Draw Call to draw triangle using assigned buffer
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+       // glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        //Indices
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         //Another Way for DrawCall that we will use later on
         //glDrawElements(GL_TRIANGLES, 6, GL_STATIC_DRAW);
