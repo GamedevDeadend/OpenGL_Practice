@@ -6,6 +6,65 @@
 #include<sstream>
 
 
+#define ASSERT(x) if(!(x)) __debugbreak();
+#define GLCall(x) GLClearError();\
+        x;\
+        ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+
+
+static std::string getGLErrorString(GLenum error) 
+{
+    switch (error) 
+    {
+    case GL_NO_ERROR:
+        return "No error";
+
+    case GL_INVALID_ENUM:
+        return "Invalid enum";
+
+    case GL_INVALID_VALUE:
+        return "Invalid value";
+
+    case GL_INVALID_OPERATION:
+        return "Invalid operation";
+
+    case GL_STACK_OVERFLOW:
+        return "Stack overflow";
+
+    case GL_STACK_UNDERFLOW:
+        return "Stack underflow";
+
+    case GL_OUT_OF_MEMORY:
+        return "Out of memory";
+
+    case GL_TABLE_TOO_LARGE:
+        return "Table too large";
+
+    default:
+        return "Unknown error";
+    }
+}
+
+
+static void GLClearError()
+{
+    while (glGetError() != GL_NO_ERROR);
+}
+static bool GLLogCall(const char* functionName, const char* filePath, long line)
+{
+    while (GLenum error = glGetError())
+    {
+        std::cout << "[Open GL]" << "v" << glGetString(GL_VERSION)<<std::endl
+                  <<"[File] : "<<filePath <<std::endl
+                  <<"[ERROR] :- " << getGLErrorString(error) <<
+                    "\n[FUNCTION] "<< functionName<<" on line "<<line<<std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+
 struct parsedShaders 
 {
     std::string VertexCode;
@@ -254,7 +313,8 @@ int main(void)
        // glDrawArrays(GL_TRIANGLES, 0, 6);
 
         //Indices
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
+       
 
         //Another Way for DrawCall that we will use later on
         //glDrawElements(GL_TRIANGLES, 6, GL_STATIC_DRAW);
