@@ -6,12 +6,16 @@
 #include<sstream>
 
 
+// Macro to apply breakpoint at runtime if soln is on Debug
 #define ASSERT(x) if(!(x)) __debugbreak();
+
+//Macro to wrap GlClear, Glogcall and Assert forparticular func x
 #define GLCall(x) GLClearError();\
         x;\
         ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 
 
+// function to map error code to repective messages
 static std::string getGLErrorString(GLenum error) 
 {
     switch (error) 
@@ -45,11 +49,20 @@ static std::string getGLErrorString(GLenum error)
     }
 }
 
-
+// Method to clear error log
 static void GLClearError()
 {
+    //glgetError basically return current error codes and set error flag to GL_NO_ERROR
     while (glGetError() != GL_NO_ERROR);
 }
+
+/// <summary>
+/// Method to collect get log errors
+/// </summary>
+/// <param name="functionName"></param>
+/// <param name="filePath"></param>
+/// <param name="line"></param>
+/// <returns></returns>
 static bool GLLogCall(const char* functionName, const char* filePath, long line)
 {
     while (GLenum error = glGetError())
@@ -187,6 +200,10 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Graphics Engine", NULL, NULL);
     if (!window)
@@ -197,6 +214,7 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
 
     //Initializing Glew for OpenGL glew is library (GLEW is common library of abstraction of OpenGL implementation for all platforms) 
     glewInit();
@@ -251,21 +269,27 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
     //Specify size and give data
-    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
 
     //Vertex(Not necessay pos it can have manyother attributes)->attributes->Components
+
+    //Vertex Array
+    unsigned int vao;
+    GLCall(glGenVertexArrays(1, &vao));
+    GLCall(glBindVertexArray(vao));
+
+    //To Enable Vertex Attribute of particular vertex Index
+    GLCall(glEnableVertexAttribArray(0));
 
     //Function to define Attribute of vertex
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (const void*)0);
 
-    //To Enable Vertex Attribute of particular vertex Index
-    glEnableVertexAttribArray(0);
 
     //INDICES BUFFER
 
         unsigned int ibo;
-      //for blocking buffer
-        glGenBuffers(1, &ibo); //ibo  = Indices Bounding Objects
+    //for blocking Index buffer
+    glGenBuffers(1, &ibo); //ibo  = Indices Bounding Objects
 
      /*
      for selecting buffer and use it as array
@@ -301,6 +325,20 @@ int main(void)
     //To Use Program Object
     glUseProgram(program);
 
+
+    ///Uniforms : uniforms are way to send data to gpu shader code from cpu
+    GLCall(int location = glGetUniformLocation(program, "u_Color");)
+        ASSERT(location != -1)
+
+    //Unbinding all objects
+    GLCall(glBindVertexArray(0));
+    GLCall(glUseProgram(0));    
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
+
+    float r = 0.1f, g = 0.5f, b = 1.0f;
+    float increment = 0.05f;
     /* Loop until the user closes the window */
     
     while (!glfwWindowShouldClose(window))
@@ -312,8 +350,25 @@ int main(void)
         //Draw Call to draw triangle using assigned buffer
        // glDrawArrays(GL_TRIANGLES, 0, 6);
 
+        if( r > 1.0f)
+        {
+           increment = -0.05f;
+        }
+        else if ( r < 0.0f)
+        {
+            increment = 0.05f;
+        }
+
+        r += increment;
+
+        GLCall(glUseProgram(program));
+        GLCall(glUniform4f(location, r, g, b, 1.0f));
+
+        GLCall(glBindVertexArray(vao));
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+
         //Indices
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
        
 
         //Another Way for DrawCall that we will use later on
