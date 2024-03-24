@@ -4,78 +4,9 @@
 #include<fstream>
 #include<string>
 #include<sstream>
-
-
-// Macro to apply breakpoint at runtime if soln is on Debug
-#define ASSERT(x) if(!(x)) __debugbreak();
-
-//Macro to wrap GlClear, Glogcall and Assert forparticular func x
-#define GLCall(x) GLClearError();\
-        x;\
-        ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-
-// function to map error code to repective messages
-static std::string getGLErrorString(GLenum error) 
-{
-    switch (error) 
-    {
-    case GL_NO_ERROR:
-        return "No error";
-
-    case GL_INVALID_ENUM:
-        return "Invalid enum";
-
-    case GL_INVALID_VALUE:
-        return "Invalid value";
-
-    case GL_INVALID_OPERATION:
-        return "Invalid operation";
-
-    case GL_STACK_OVERFLOW:
-        return "Stack overflow";
-
-    case GL_STACK_UNDERFLOW:
-        return "Stack underflow";
-
-    case GL_OUT_OF_MEMORY:
-        return "Out of memory";
-
-    case GL_TABLE_TOO_LARGE:
-        return "Table too large";
-
-    default:
-        return "Unknown error";
-    }
-}
-
-// Method to clear error log
-static void GLClearError()
-{
-    //glgetError basically return current error codes and set error flag to GL_NO_ERROR
-    while (glGetError() != GL_NO_ERROR);
-}
-
-/// <summary>
-/// Method to collect get log errors
-/// </summary>
-/// <param name="functionName"></param>
-/// <param name="filePath"></param>
-/// <param name="line"></param>
-/// <returns></returns>
-static bool GLLogCall(const char* functionName, const char* filePath, long line)
-{
-    while (GLenum error = glGetError())
-    {
-        std::cout << "[Open GL]" << "v" << glGetString(GL_VERSION)<<std::endl
-                  <<"[File] : "<<filePath <<std::endl
-                  <<"[ERROR] :- " << getGLErrorString(error) <<
-                    "\n[FUNCTION] "<< functionName<<" on line "<<line<<std::endl;
-        return false;
-    }
-
-    return true;
-}
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 
 struct parsedShaders 
@@ -192,7 +123,7 @@ static unsigned int CreateShader(const std::string& VertexShader, const std::str
 
 int main(void)
 {
-	std::cout << "Rendering..." << std::endl;
+    std::cout << "Rendering..." << std::endl;
 
     GLFWwindow* window;
 
@@ -222,10 +153,11 @@ int main(void)
     if (glewInit() == GLEW_OK)
     {
         std::cout << "Init Success" << std::endl;
-        std::cout << glGetString(GL_VERSION)  << std::endl;
+        std::cout << glGetString(GL_VERSION) << std::endl;
     }
 
-
+{
+    
     //drawing square using indices without drawing duplicate vertices
     float positions[] =
     {
@@ -254,29 +186,12 @@ int main(void)
          -0.5f,-0.5f
     };*/
 
-
-   unsigned int buffer;
-    //for blocking buffer
-   glGenBuffers(1, &buffer);
-
- /*  
-     for selecting buffer and use it as array
-     (example : 
-                  photoshop if i select layer then i can't draw on another layer
-                  similary we will give draw call for selected buffer only
-     )
-*/
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-    //Specify size and give data
-    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
-
-    //Vertex(Not necessay pos it can have manyother attributes)->attributes->Components
-
     //Vertex Array
     unsigned int vao;
     GLCall(glGenVertexArrays(1, &vao));
     GLCall(glBindVertexArray(vao));
+
+    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
 
     //To Enable Vertex Attribute of particular vertex Index
     GLCall(glEnableVertexAttribArray(0));
@@ -284,24 +199,8 @@ int main(void)
     //Function to define Attribute of vertex
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (const void*)0);
 
-
     //INDICES BUFFER
-
-        unsigned int ibo;
-    //for blocking Index buffer
-    glGenBuffers(1, &ibo); //ibo  = Indices Bounding Objects
-
-     /*
-     for selecting buffer and use it as array
-     (example :
-                  photoshop if i select layer then i can't draw on another layer
-                  similary we will give draw call for selected buffer only
-     )
-*/
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-
-    //Specify size and give data
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * 2 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    IndexBuffer ib(indices, 6);
 
     //Vertex(Not necessay pos it can have manyother attributes)->attributes->Components
 
@@ -320,7 +219,7 @@ int main(void)
 
     std::cout << vs << std::endl << fs << std::endl;
 
-    unsigned int program =  CreateShader(vs, fs);
+    unsigned int program = CreateShader(vs, fs);
 
     //To Use Program Object
     glUseProgram(program);
@@ -330,17 +229,17 @@ int main(void)
     GLCall(int location = glGetUniformLocation(program, "u_Color");)
         ASSERT(location != -1)
 
-    //Unbinding all objects
-    GLCall(glBindVertexArray(0));
-    GLCall(glUseProgram(0));    
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+        //Unbinding all objects
+        GLCall(glBindVertexArray(0));
+    GLCall(glUseProgram(0));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
 
     float r = 0.1f, g = 0.5f, b = 1.0f;
     float increment = 0.05f;
     /* Loop until the user closes the window */
-    
+
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
@@ -350,11 +249,11 @@ int main(void)
         //Draw Call to draw triangle using assigned buffer
        // glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        if( r > 1.0f)
+        if (r > 1.0f)
         {
-           increment = -0.05f;
+            increment = -0.05f;
         }
-        else if ( r < 0.0f)
+        else if (r < 0.0f)
         {
             increment = 0.05f;
         }
@@ -365,11 +264,11 @@ int main(void)
         GLCall(glUniform4f(location, r, g, b, 1.0f));
 
         GLCall(glBindVertexArray(vao));
-        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+        ib.Bind();
 
         //Indices
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-       
+
 
         //Another Way for DrawCall that we will use later on
         //glDrawElements(GL_TRIANGLES, 6, GL_STATIC_DRAW);
@@ -388,7 +287,8 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
     }
+}
 
     glfwTerminate();
     return 0;
-}
+};
