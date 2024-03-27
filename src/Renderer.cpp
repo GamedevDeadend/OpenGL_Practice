@@ -1,5 +1,9 @@
 #include "Renderer.h"
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
 #include <iostream>
+
 
 
 std::string getGLErrorString(GLenum error)
@@ -54,4 +58,21 @@ bool GLLogCall(const char* functionName, const char* filePath, long line)
     }
 
     return true;
+}
+
+void Renderer::Draw(const IndexBuffer& ib, const VertexArray& va, const Shader& shader)const
+{
+    shader.Bind();
+
+    va.Bind();
+    ib.Bind();
+
+    //Draw Call using Indices
+    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+}
+
+void Renderer::Clear() const
+{
+    /* Render here */
+    GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }

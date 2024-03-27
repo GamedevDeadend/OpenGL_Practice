@@ -34,3 +34,16 @@ void GLClearError();
 /// <returns></returns>
 bool GLLogCall(const char* functionName, const char* filePath, long line);
 
+class IndexBuffer;
+class VertexArray;
+class Shader;
+
+class Renderer
+{
+private:
+
+public:
+    void Clear()const;
+    void Draw(const IndexBuffer& ib, const VertexArray& va, const Shader& shader)const;
+};
+
