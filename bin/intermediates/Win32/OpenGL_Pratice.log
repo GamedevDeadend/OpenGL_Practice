@@ -1,10 +1,12 @@
 ﻿  application.cpp
-E:\C++\OpenGL_Pratice\src\VertexArray.h(2,9): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-E:\C++\OpenGL_Pratice\src\VertexArray.h(3,9): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-  VertexArray.cpp
-E:\C++\OpenGL_Pratice\src\VertexArray.cpp(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-E:\C++\OpenGL_Pratice\src\VertexArray.h(2,9): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-E:\C++\OpenGL_Pratice\src\VertexArray.h(3,9): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+E:\C++\OpenGL_Pratice\src\VertexArray.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+E:\C++\OpenGL_Pratice\src\VertexArray.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Shader.cpp
+E:\C++\OpenGL_Pratice\src\Shader.cpp(2,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+E:\C++\OpenGL_Pratice\src\Shader.cpp(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+E:\C++\OpenGL_Pratice\src\Shader.cpp(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+E:\C++\OpenGL_Pratice\src\Shader.cpp(5,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+E:\C++\OpenGL_Pratice\src\Shader.cpp(6,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
   Generating Code...
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
