@@ -2,5 +2,7 @@ E:\C++\OpenGL_Pratice\src\application.cpp;E:\C++\OpenGL_Pratice\bin\intermediate
 E:\C++\OpenGL_Pratice\src\IndexBuffer.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\IndexBuffer.obj
 E:\C++\OpenGL_Pratice\src\Renderer.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\Renderer.obj
 E:\C++\OpenGL_Pratice\src\Shader.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\Shader.obj
+E:\C++\OpenGL_Pratice\src\Texture.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\Texture.obj
+E:\C++\OpenGL_Pratice\src\vendor\stb_image\stb_image.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\stb_image.obj
 E:\C++\OpenGL_Pratice\src\VertexArray.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\VertexArray.obj
 E:\C++\OpenGL_Pratice\src\VertexBuffer.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\VertexBuffer.obj

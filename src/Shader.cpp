@@ -149,6 +149,16 @@ void Shader::SetUnifom4f(const std::string& name, float v0, float v1, float v2, 
     GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
 }
 
+void Shader::SetUniform1i(const std::string& name, int value)
+{
+    GLCall(glUniform1i(GetUniformLocation(name), value));
+}
+
+void Shader::SetUnifom4i(const std::string& name, int v0, int v1, int v2, int v3)
+{
+    GLCall(glUniform4i(GetUniformLocation(name), v0, v1, v2, v3));
+}
+
 int Shader::GetUniformLocation( const std::string& name)const
 {
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())

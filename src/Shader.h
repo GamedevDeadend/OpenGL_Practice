@@ -25,6 +25,8 @@ public:
 	/// Set Uniform
 	/// </summary>
 	void SetUnifom4f(const std::string& name, float v0, float v1, float v2, float v3);
+	void SetUniform1i(const std::string& name, int value);
+	void SetUnifom4i(const std::string& name, int v0, int v1, int v2, int v3);
 
 private:
 
