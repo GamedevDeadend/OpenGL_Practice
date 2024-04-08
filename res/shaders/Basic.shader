@@ -4,11 +4,13 @@
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec2 textCoord;
 out vec2 v_TextCoord;
+
+uniform mat4 u_mvp;
         
 void main()
 {
     gl_Position = position;
-    v_TextCoord = textCoord;
+    v_TextCoord = textCoord * u_mvp;
 };
 
 
@@ -24,7 +26,7 @@ uniform sampler2D u_Texture;
         
 void main()
 {
-    vec4 textColor = texture(u_Texture, v_TextCoord);
+    vec4 textColor = texture(u_Texture, v_TextCoord);//Sampling from texturing
     //color = u_Color;
     color = textColor * u_Color;
     //color = textColor;
