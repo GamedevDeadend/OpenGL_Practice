@@ -92,13 +92,20 @@ int main(void)
 
     glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
 
+    //For camer
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+    //Scaling tried but pivot is not correct
+    glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+    glm::mat4 mvp = proj * view * model;
   //  glm::vec4 vp = glm::vec4(100.0f, 100.0f, 0.0f, 1.0f);
   // glm::vec4 res = proj * vp;
 
 
     float r = 0.1f, g = 0.5f, b = 1.0f;
     //u_ Naming Convention for Uniforms
-    shader.SetUniformMat4f("u_MVP", proj);
+    shader.SetUniformMat4f("u_MVP", mvp);
     shader.SetUnifom4f("u_Color", r, g, b, 1.0f);
     shader.SetUniform1i("u_Texture", 0);
 

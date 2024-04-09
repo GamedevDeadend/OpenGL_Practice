@@ -1,6 +1,2 @@
 ﻿  application.cpp
-E:\C++\OpenGL_Pratice\bin\intermediates\Win32\glm.obj : warning LNK4042: object specified more than once; extras ignored
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'E:\C++\OpenGL_Pratice\bin\Win32\vc120.pdb'; linking object as if no debug info
   OpenGL_Pratice.vcxproj -> E:\C++\OpenGL_Pratice\bin\Win32\OpenGL_Pratice.exe
