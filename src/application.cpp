@@ -5,6 +5,8 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -27,7 +29,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Graphics Engine", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "Graphics Engine", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -54,10 +56,10 @@ int main(void)
     {
                         //Sampling Texture Coordinates(Mapping Coordinates)
                        //(Pixels to retrieve from texture, for each vertex)
-         -0.5f,-0.5f,  0.0f,0.0f,       //0    
-         -0.5f, 0.5f,  0.0f,1.0f,       //1
-          0.5f, 0.5f,  1.0f,1.0f,       //2
-          0.5f,-0.5f,  1.0f,0.0f        //3
+         240.0f,  30.0f, 0.0f,0.0f,       //0    
+         240.0f,510.0f, 0.0f,1.0f,       //1
+         720.0f,510.0f, 1.0f,1.0f,       //2
+         720.0f,  30.0f, 1.0f,0.0f        //3
     };
 
     //indices Method
@@ -88,8 +90,15 @@ int main(void)
     Shader shader("res/shaders/Basic.shader");
     shader.Bind();
 
+    glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+
+  //  glm::vec4 vp = glm::vec4(100.0f, 100.0f, 0.0f, 1.0f);
+  // glm::vec4 res = proj * vp;
+
+
     float r = 0.1f, g = 0.5f, b = 1.0f;
     //u_ Naming Convention for Uniforms
+    shader.SetUniformMat4f("u_MVP", proj);
     shader.SetUnifom4f("u_Color", r, g, b, 1.0f);
     shader.SetUniform1i("u_Texture", 0);
 
