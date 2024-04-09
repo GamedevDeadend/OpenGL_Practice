@@ -100,22 +100,19 @@ int main(void)
     Shader shader("res/shaders/Basic.shader");
     shader.Bind();
 
-    glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+    glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+    glm::vec3 translate = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 rotation = glm::vec3(1.0f);
 
-    //For camer
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-
-    //Scaling tried but pivot is not correct
-    glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-
-    glm::mat4 mvp = proj * view * model;
   //  glm::vec4 vp = glm::vec4(100.0f, 100.0f, 0.0f, 1.0f);
   // glm::vec4 res = proj * vp;
 
     float r = 0.1f, g = 0.5f, b = 1.0f;
+    
+    glm::vec3 color = glm::vec3(r, g, b);
+
     //u_ Naming Convention for Uniforms
-    shader.SetUniformMat4f("u_MVP", mvp);
-    shader.SetUnifom4f("u_Color", r, g, b, 1.0f);
+    shader.SetUnifom4f("u_Color", color.r, color.g, color.b, 1.0f);
     shader.SetUniform1i("u_Texture", 0);
 
     Texture texture("res/textures/pngegg.png");
@@ -134,10 +131,6 @@ int main(void)
 
     Renderer renderer;
 
-    bool show_demo_window = true;
-    bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -146,38 +139,46 @@ int main(void)
         //Imgui New frame
         ImGui_ImplGlfwGL3_NewFrame();
 
-        if (r > 1.0f)
+        if (color.r > 1.0f)
         {
             increment = -0.05f;
         }
-        else if (r < 0.0f)
+        else if (color.r < 0.0f)
         {
             increment = 0.05f;
         }
 
-        r += increment;
+        color.r += increment;
+
+
+        ///mvp calculations
+
+        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+        //For camera
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        //Scaling tried but pivot is not correct
+        //scaling, translating & rotating
+        glm::mat4 model = glm::scale(glm::mat4(1.0f), scale);
+        model = glm::translate(model, translate);
+        //model = glm::rotate(model, 90.0f, rotation);
+
+        glm::mat4 mvp = proj * view * model;
 
         shader.Bind();
-        shader.SetUnifom4f("u_Color", r, g, b, 1.0f);
+        shader.SetUnifom4f("u_Color", color.r, color.g, color.b, 1.0f);
+        shader.SetUniformMat4f("u_MVP", mvp);
         renderer.Draw(ib, va, shader);
 
 
         //Imgui New Window Settings
         {
-            static float f = 0.0f;
-            static int counter = 0;
-            ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our windows open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
+            //ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+            ImGui::Text("Kimi no na wa");                           // Display some text (you can use a format string too)
+            ImGui::SliderFloat2("2D Scale", &scale.x, 0.1f, 10.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
+            ImGui::SliderFloat2("2D Translate", &translate.x, -480.0f, 480.0f);
+            //ImGui::SliderFloat3("Color", &color.x, 0.0f, 255.0f);
+            ImGui::ColorEdit3("clear color", (float*)&color); // Edit 3 floats representing a color
+            //ImGui::SliderFloat2("2D Rotate", &rotation.x, 0.1f, 500.0f);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         }
         
