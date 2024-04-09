@@ -4,7 +4,10 @@ E:\C++\OpenGL_Pratice\src\Renderer.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\W
 E:\C++\OpenGL_Pratice\src\Shader.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\Shader.obj
 E:\C++\OpenGL_Pratice\src\Texture.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\Texture.obj
 E:\C++\OpenGL_Pratice\src\vendor\glm\detail\glm.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\glm.obj
-E:\C++\OpenGL_Pratice\src\vendor\glm\glm.cppm;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\glm.obj
+E:\C++\OpenGL_Pratice\src\vendor\imgui\imgui.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\imgui.obj
+E:\C++\OpenGL_Pratice\src\vendor\imgui\imgui_demo.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\imgui_demo.obj
+E:\C++\OpenGL_Pratice\src\vendor\imgui\imgui_draw.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\imgui_draw.obj
+E:\C++\OpenGL_Pratice\src\vendor\imgui\imgui_impl_glfw_gl3.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\imgui_impl_glfw_gl3.obj
 E:\C++\OpenGL_Pratice\src\vendor\stb_image\stb_image.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\stb_image.obj
 E:\C++\OpenGL_Pratice\src\VertexArray.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\VertexArray.obj
 E:\C++\OpenGL_Pratice\src\VertexBuffer.cpp;E:\C++\OpenGL_Pratice\bin\intermediates\Win32\VertexBuffer.obj

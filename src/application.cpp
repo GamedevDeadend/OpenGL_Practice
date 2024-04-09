@@ -7,6 +7,8 @@
 #include "Texture.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -48,6 +50,14 @@ int main(void)
         std::cout << "Init Success" << std::endl;
         std::cout << glGetString(GL_VERSION) << std::endl;
     }
+
+    ///ImGUI Setup
+    ImGui::CreateContext();
+    ImGui_ImplGlfwGL3_Init(window, true);
+
+    // Setup style
+    ImGui::StyleColorsDark();
+
 
 {
     
@@ -102,7 +112,6 @@ int main(void)
   //  glm::vec4 vp = glm::vec4(100.0f, 100.0f, 0.0f, 1.0f);
   // glm::vec4 res = proj * vp;
 
-
     float r = 0.1f, g = 0.5f, b = 1.0f;
     //u_ Naming Convention for Uniforms
     shader.SetUniformMat4f("u_MVP", mvp);
@@ -125,10 +134,17 @@ int main(void)
 
     Renderer renderer;
 
+    bool show_demo_window = true;
+    bool show_another_window = false;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         renderer.Clear();
+
+        //Imgui New frame
+        ImGui_ImplGlfwGL3_NewFrame();
 
         if (r > 1.0f)
         {
@@ -144,7 +160,31 @@ int main(void)
         shader.Bind();
         shader.SetUnifom4f("u_Color", r, g, b, 1.0f);
         renderer.Draw(ib, va, shader);
+
+
+        //Imgui New Window Settings
+        {
+            static float f = 0.0f;
+            static int counter = 0;
+            ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
+            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
+            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our windows open/close state
+            ImGui::Checkbox("Another Window", &show_another_window);
+
+            if (ImGui::Button("Button"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
+                counter++;
+            ImGui::SameLine();
+            ImGui::Text("counter = %d", counter);
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        }
         
+        //Draw Command To Draw imgui Window
+        ImGui::Render();
+        ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -154,6 +194,9 @@ int main(void)
     }
 }
 
+    //Shutdown Command for Imgui
+    ImGui_ImplGlfwGL3_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
     return 0;
 };
