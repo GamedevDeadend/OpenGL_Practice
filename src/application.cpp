@@ -164,21 +164,22 @@ int main(void)
 
         glm::mat4 mvp = proj * view * model;
 
-        shader.Bind();
+        //shader.Bind();
+        renderer.Draw(ib, va, shader);
         shader.SetUnifom4f("u_Color", color.r, color.g, color.b, 1.0f);
         shader.SetUniformMat4f("u_MVP", mvp);
-        renderer.Draw(ib, va, shader);
 
 
         //Imgui New Window Settings
         {
             //ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+            //ImGui::SliderFloat2("2D Rotate", &rotation.x, 0.1f, 500.0f);
+            //ImGui::SliderFloat3("Color", &color.x, 0.0f, 255.0f);
+            ImGui::SameLine();
             ImGui::Text("Kimi no na wa");                           // Display some text (you can use a format string too)
             ImGui::SliderFloat2("2D Scale", &scale.x, 0.1f, 10.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
             ImGui::SliderFloat2("2D Translate", &translate.x, -480.0f, 480.0f);
-            //ImGui::SliderFloat3("Color", &color.x, 0.0f, 255.0f);
             ImGui::ColorEdit3("clear color", (float*)&color); // Edit 3 floats representing a color
-            //ImGui::SliderFloat2("2D Rotate", &rotation.x, 0.1f, 500.0f);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         }
         
