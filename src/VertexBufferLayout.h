@@ -23,6 +23,10 @@ struct VertexBufferElement
 	}
 };
 
+//Contains Buffer ELements
+// Each Vertex Buffer ELement will be created as atrribute pointer.
+//glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.GetStride(), (const void*)offset);
+
 class VertexBufferLayout
 {
 private:

@@ -61,15 +61,17 @@ int main(void)
 
 {
     
+    glm::vec2 originOffset = glm::vec2(480.0f, 270.0f);
+
     //drawing square using indices without drawing duplicate vertices
     float positions[] =
     {
-                        //Sampling Texture Coordinates(Mapping Coordinates)
-                       //(Pixels to retrieve from texture, for each vertex)
-         240.0f,  30.0f, 0.0f,0.0f,       //0    
-         240.0f,510.0f, 0.0f,1.0f,       //1
-         720.0f,510.0f, 1.0f,1.0f,       //2
-         720.0f,  30.0f, 1.0f,0.0f        //3
+                                                                             //Sampling Texture Coordinates(Mapping Coordinates)
+                                                                            //(Pixels to retrieve from texture, for each vertex)
+          (-150.0f + originOffset.x), (-150.0f + originOffset.y),           0.0f,0.0f,       //0    
+          (-150.0f + originOffset.x), ( 150.0f + originOffset.y),           0.0f,1.0f,       //1
+          ( 150.0f + originOffset.x), ( 150.0f + originOffset.y),           1.0f,1.0f,       //2
+          ( 150.0f + originOffset.x), (-150.0f + originOffset.y),           1.0f,0.0f        //3
     };
 
     //indices Method
@@ -101,7 +103,8 @@ int main(void)
     shader.Bind();
 
     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
-    glm::vec3 translate = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 translateA = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 translateB = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 rotation = glm::vec3(1.0f);
 
   //  glm::vec4 vp = glm::vec4(100.0f, 100.0f, 0.0f, 1.0f);
@@ -150,24 +153,41 @@ int main(void)
 
         color.r += increment;
 
-
-        ///mvp calculations
-
-        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-        //For camera
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        //Scaling tried but pivot is not correct
-        //scaling, translating & rotating
-        glm::mat4 model = glm::scale(glm::mat4(1.0f), scale);
-        model = glm::translate(model, translate);
-        //model = glm::rotate(model, 90.0f, rotation);
-
-        glm::mat4 mvp = proj * view * model;
-
-        //shader.Bind();
+        {
+            shader.Bind();
+            ///mvp calculations
+            glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+            //For camera
+            glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+            //Scaling tried but pivot is not correct
+            //scaling, translating & rotating
+            glm::mat4 model = glm::scale(glm::mat4(1.0f), scale);
+            model = glm::translate(model, translateA);
+            //model = glm::rotate(model, 90.0f, rotation);
+            glm::mat4 mvp = proj * view * model;
+            shader.SetUnifom4f("u_Color", color.r, color.g, color.b, 1.0f);
+            shader.SetUniformMat4f("u_MVP", mvp);
+        }
+        
         renderer.Draw(ib, va, shader);
-        shader.SetUnifom4f("u_Color", color.r, color.g, color.b, 1.0f);
-        shader.SetUniformMat4f("u_MVP", mvp);
+        {
+            glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+            //For camera
+            glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+            //Scaling tried but pivot is not correct
+            //scaling, translating & rotating
+            glm::mat4 model = glm::scale(glm::mat4(1.0f), scale);
+            model = glm::translate(model, translateB);
+            //model = glm::rotate(model, 90.0f, rotation);
+            glm::mat4 mvp = proj * view * model;
+            shader.SetUnifom4f("u_Color", color.r, color.g, color.b, 1.0f);
+            shader.SetUniformMat4f("u_MVP", mvp);
+        }
+
+        renderer.Draw(ib, va, shader);
+
+
+
 
 
         //Imgui New Window Settings
@@ -178,7 +198,8 @@ int main(void)
             ImGui::SameLine();
             ImGui::Text("Kimi no na wa");                           // Display some text (you can use a format string too)
             ImGui::SliderFloat2("2D Scale", &scale.x, 0.1f, 10.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
-            ImGui::SliderFloat2("2D Translate", &translate.x, -480.0f, 480.0f);
+            ImGui::SliderFloat2("2D Translate A", &translateA.x, -480.0f, 480.0f);
+            ImGui::SliderFloat2("2D Translate B", &translateB.x, -480.0f, 480.0f);
             ImGui::ColorEdit3("clear color", (float*)&color); // Edit 3 floats representing a color
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         }
